@@ -219,17 +219,14 @@ botonEnviarLink.addEventListener('click', () => {
 
 botonCancelar.addEventListener('click', () => {
     if (carrito.length > 0) {
-        const confirmar = confirm('¿Estás seguro de que quieres cancelar la compra? Se eliminarán todos los productos del carrito.');
-        if (confirmar) {
-            carrito = [];
-            actualizarCarritoHTML();
-            inputMail.style.display = 'none';
-            botonEnviarLink.style.display = 'none';
-            botonFinalizar.style.display = 'block';
-            mensajeConfirmacion.textContent = ""; 
-            alert('Compra cancelada. Tu carrito ha sido vaciado.');
-        }
-    } else {
+        carrito = [];
+        actualizarCarritoHTML();
+        inputMail.style.display = 'none';
+        botonEnviarLink.style.display = 'none';
+        botonFinalizar.style.display = 'block';
+        mensajeConfirmacion.textContent = ""; 
+        alert('Compra cancelada. Tu carrito ha sido vaciado.');
+        } else {
         alert('El carrito ya está vacío.');
     }
 });
