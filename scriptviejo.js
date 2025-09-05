@@ -1,20 +1,62 @@
-const formulario = document.getElementById('formulario-id');
+const nombreGuardado = localStorage.getItem('nombreUsuario');
+const edadGuardada = localStorage.getItem('edadUsuario');
+
+if (nombreGuardado && edadGuardada >= 18) {
+    const saludoUser = document.getElementById('saludo');
+    const miTiendaDiv = document.getElementById('tienda');
+    const miCarritoDiv = document.getElementById('carrito');
+
+        document.getElementById('nombre-input').value = nombreGuardado;
+        document.getElementById('edad-input').value = edadGuardada;
+
+        saludoUser.textContent = `¡Hola de nuevo, ${nombreGuardado}! Bienvenido/a a nuestro Catalogo Web`;
+        miTiendaDiv.style.display = 'block';
+        miCarritoDiv.style.display = 'block';
+}
+
+
+const formulario = document.getElementById('formulario-id'); 
+
 const saludoUser = document.getElementById('saludo');
+
 const miTiendaDiv = document.getElementById('tienda');
 const miCarritoDiv = document.getElementById('carrito');
 
 
-const listaCarrito = document.getElementById('lista-carrito');
-const totalElemento = document.getElementById('total-compra');
-const mensajeFinal = document.getElementById('mensaje-final');
 
-let mensaje = ""; 
 
-const botonFinalizar = document.getElementById('finalizar-compra');
-const botonCancelar = document.getElementById('cancelar-compra');
-const inputMail = document.getElementById('input-mail');
-const botonEnviarLink = document.getElementById('enviar-link');
-const mensajeConfirmacion = document.getElementById('mensaje-confirmacion');
+
+
+formulario.addEventListener('submit', (evento) => {
+    
+    evento.preventDefault();
+
+    const nombreInput = document.getElementById('nombre-input');
+    const edadInput = document.getElementById('edad-input');
+
+    const nombre = nombreInput.value;
+    const edad = edadInput.value;
+
+    if (edad >= 18) {
+        localStorage.setItem('nombreUsuario', nombre);
+        localStorage.setItem('edadUsuario', edad);
+
+        saludoUser.textContent = `¡Hola, ${nombre}! Bienvenido/a a nuestro Catalogo Web`;
+        
+        miTiendaDiv.style.display = 'block';
+        miCarritoDiv.style.display = 'block';
+
+    } else {
+        saludoUser.textContent = `¡Hola, ${nombre}! Lo sentimos, pero debes ser mayor de edad para ver nuestro Catalogo Web`;
+
+        miTiendaDiv.style.display = 'none';
+        miCarritoDiv.style.display = 'none';
+    }
+
+   
+    
+});
+
 
 const productos = [
     { id:1, nombre: 'Anti-Age Complex', precio: 25000 },
@@ -27,20 +69,43 @@ const productos = [
 
 let carrito = [];
 
-const nombreGuardado = localStorage.getItem('nombreUsuario');
-const edadGuardada = localStorage.getItem('edadUsuario');
-if (nombreGuardado && edadGuardada >= 18) {
-    document.getElementById('nombre-input').value = nombreGuardado;
-    document.getElementById('edad-input').value = edadGuardada;
-    saludoUser.textContent = `¡Hola de nuevo, ${nombreGuardado}! Bienvenido/a a nuestro Catalogo Web`;
-    miTiendaDiv.style.display = 'block';
-    miCarritoDiv.style.display = 'block';
-}
+
+
+const botonesAgregar = document.querySelectorAll('.agregar-carrito');
+
+botonesAgregar.forEach(boton => {
+    boton.addEventListener('click', (evento) => {
+        const idBoton = evento.target.id;
+        
+        const idProducto = parseInt(idBoton);
+        
+        const productoEncontrado = productos.find(producto => producto.id === idProducto);
+
+        if (productoEncontrado) {
+            const productoEnCarrito = carrito.find(p => p.id === productoEncontrado.id);
+            
+            if (productoEnCarrito) {
+                productoEnCarrito.cantidad++;
+            } else {
+                carrito.push({ ...productoEncontrado, cantidad: 1 });
+            }
+            
+        }
+        actualizarCarritoHTML();
+    });
+});
+
+const listaCarrito = document.getElementById('lista-carrito');
+const totalElemento = document.getElementById('total-compra');
+
+const mensajeFinal = document.getElementById('mensaje-final'); 
+
+let mensaje = "";
 
 const carritoGuardado = localStorage.getItem('carrito');
 if (carritoGuardado) {
     carrito = JSON.parse(carritoGuardado);
-    actualizarCarritoHTML(); 
+    actualizarCarritoHTML();
 }
 
 function recompensa(total) {
@@ -132,59 +197,13 @@ function eliminarProducto(idProducto) {
     actualizarCarritoHTML();
 }
 
-formulario.addEventListener('submit', (evento) => {
-    
-    evento.preventDefault();
+const botonFinalizar = document.getElementById('finalizar-compra');
+const botonCancelar = document.getElementById('cancelar-compra');
 
-    const nombreInput = document.getElementById('nombre-input');
-    const edadInput = document.getElementById('edad-input');
+const inputMail = document.getElementById('input-mail');
+const botonEnviarLink = document.getElementById('enviar-link');
+const mensajeConfirmacion = document.getElementById('mensaje-confirmacion');
 
-    const nombre = nombreInput.value;
-    const edad = edadInput.value;
-
-    if (edad >= 18) {
-        localStorage.setItem('nombreUsuario', nombre);
-        localStorage.setItem('edadUsuario', edad);
-
-        saludoUser.textContent = `¡Hola, ${nombre}! Bienvenido/a a nuestro Catalogo Web`;
-        
-        miTiendaDiv.style.display = 'block';
-        miCarritoDiv.style.display = 'block';
-
-    } else {
-        saludoUser.textContent = `¡Hola, ${nombre}! Lo sentimos, pero debes ser mayor de edad para ver nuestro Catalogo Web`;
-
-        miTiendaDiv.style.display = 'none';
-        miCarritoDiv.style.display = 'none';
-    }
-
-   
-    
-});
-
-const botonesAgregar = document.querySelectorAll('.agregar-carrito');
-
-botonesAgregar.forEach(boton => {
-    boton.addEventListener('click', (evento) => {
-        const idBoton = evento.target.id;
-        
-        const idProducto = parseInt(idBoton);
-        
-        const productoEncontrado = productos.find(producto => producto.id === idProducto);
-
-        if (productoEncontrado) {
-            const productoEnCarrito = carrito.find(p => p.id === productoEncontrado.id);
-            
-            if (productoEnCarrito) {
-                productoEnCarrito.cantidad++;
-            } else {
-                carrito.push({ ...productoEncontrado, cantidad: 1 });
-            }
-            
-        }
-        actualizarCarritoHTML();
-    });
-});
 
 botonFinalizar.addEventListener('click', () => {
     
@@ -233,6 +252,4 @@ botonCancelar.addEventListener('click', () => {
         alert('El carrito ya está vacío.');
     }
 });
-
-
 
